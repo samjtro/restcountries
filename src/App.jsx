@@ -4,6 +4,15 @@ import axios from 'axios'
 
 const baseUrl = 'https://studies.cs.helsinki.fi/restcountries'
 const allCountries = `${baseUrl}/api/all`
+const specificCountry = `${baseUrl}/name`
+
+const CountryName = ({country, handler}) => {
+    return (
+        <>
+            <p>{country.name.common}</p><button onClick={handler}>show</button>
+        </>
+    )
+}
 
 const Country = ({ country }) => {
     return (
@@ -19,10 +28,21 @@ const Country = ({ country }) => {
 }
 
 const Countries = ({ countries }) => {
-    if (countries.length < 10 && countries.length !== 1) {
-        return (<>{countries.map(x => { return (<p>{x.name.common}</p>) })}</>)
-    } else if (countries.length === 1) {
-        return (<><Country country={countries[0]} /></>)
+    const [countryToShow, setCountryToShow] = useState({})
+    const [show, setShow] = useState(false)
+    const handler = (event) => {
+        setShow(true)
+        axios
+            .get(`${specificCountry}/${event.previousElementChild.innerText}`)
+            .then(resp => setCountryToShow(resp.data))
+    }
+    if (countries.length === 1) {
+        setCountryToShow(countries[0])
+    }
+    if (show) {
+        return (<><Country country={countryToShow} /></>)
+    } else if (countries.length < 10 && countries.length !== 1) {
+        return (<>{countries.map(x => {return(<CountryName country={x} handler={handler} />)})}</>)
     }
     return (<><p>too many matches, narrow your search!</p></>)
 }
