@@ -4,25 +4,25 @@ import axios from 'axios'
 
 const baseUrl = 'https://studies.cs.helsinki.fi/restcountries'
 const allCountries = `${baseUrl}/api/all`
-const specificCountry = `${baseUrl}/name`
 
-const Country = ({country}) => {
-    return(
+const Country = ({ country }) => {
+    return (
         <>
             <p>{country.name.common}</p>
             <p>capital: {country.capital}</p>
             <p>area: {country.area}</p>
             <p>languages:</p>
-            <ul>{country.languages.map(x => {return(<li>{x}</li>)})}</ul>
+            <ul>{Object.values(country.languages).map(x => { return (<li>{x}</li>) })}</ul>
+            <img src={country.flags.png} />
         </>
     )
 }
 
-const Countries = ({countries}) => {
+const Countries = ({ countries }) => {
     if (countries.length < 10 && countries.length !== 1) {
-        return(<>{countries.map(x => {return(<p>{x.name.common}</p>)})}</>)
-    } else if(countries.length === 1) {
-        return(<><Country country={countries[0]}/></>)
+        return (<>{countries.map(x => { return (<p>{x.name.common}</p>) })}</>)
+    } else if (countries.length === 1) {
+        return (<><Country country={countries[0]} /></>)
     }
     return (<><p>too many matches, narrow your search!</p></>)
 }
@@ -30,7 +30,6 @@ const Countries = ({countries}) => {
 export default function App() {
     const [query, setQuery] = useState('')
     const [countries, setCountries] = useState([])
-    const [filteredCountries, setFilteredCountries] = useState([])
     useEffect(() => {
         axios
             .get(allCountries)
@@ -41,10 +40,10 @@ export default function App() {
         <>
             <form>
                 <div>
-                    find countries <input value={query} onChange={handleQueryChange}/>
+                    find countries <input value={query} onChange={handleQueryChange} />
                 </div>
             </form>
-            <Countries countries={countries.filter(country => country.name.common.toLowerCase().includes(query.toLowerCase()))}/>
+            <Countries countries={countries.filter(country => country.name.common.toLowerCase().includes(query.toLowerCase()))} />
         </>
     )
 }
