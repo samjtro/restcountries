@@ -28,23 +28,28 @@ const Country = ({ country }) => {
 }
 
 const Countries = ({ countries }) => {
-    const [countryToShow, setCountryToShow] = useState({})
     const [show, setShow] = useState(false)
-    const handler = (event) => {
+    const [country, setCountry] = useState({})
+    const handleShowClick = ({country}) => {
         setShow(true)
-        axios
-            .get(`${specificCountry}/${event.previousElementChild.innerText}`)
-            .then(resp => setCountryToShow(resp.data))
+        setCountry(country)
     }
-    if (countries.length === 1) {
-        setCountryToShow(countries[0])
+    if (countries.length > 10) {
+        return(<p>Please make your query more specific. Too many matches found.</p>)
+    } else if (countries.length === 1) {
+        return(<Country country={countries[0]} />)
+    } else if (show) {
+        return(<Country country={country} />)
+    } else {
+        countries.map((country) => {
+            return (
+                <div key={country.ccn3}>
+                    <span>{country.name.common}</span>
+                    <button onClick={handleShowClick(country)}>show</button>
+                </div>
+            )
+        })
     }
-    if (show) {
-        return (<><Country country={countryToShow} /></>)
-    } else if (countries.length < 10 && countries.length !== 1) {
-        return (<>{countries.map(x => {return(<CountryName country={x} handler={handler} />)})}</>)
-    }
-    return (<><p>too many matches, narrow your search!</p></>)
 }
 
 export default function App() {
